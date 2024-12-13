@@ -1,0 +1,204 @@
+{% extends "layout.html" %} {% block content %}
+<div class="container mt-5">
+    <div class="card shadow" style="background-color: #1a1a1a">
+        <div class="card-body" style="background-color: #000 !important">
+            <form id="dispatchForm">
+                <div class="mb-3">
+                    <label for="weaponName" class="form-label text-white"
+                        >Weapon Name</label
+                    >
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="weaponName"
+                        placeholder="Enter weapon name"
+                        required
+                    />
+                </div>
+
+                <div class="mb-3">
+                    <label for="weaponPrice" class="form-label text-white"
+                        >Price</label
+                    >
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="weaponPrice"
+                        placeholder="Enter price"
+                        required
+                        min="0"
+                        step="0.01"
+                    />
+                </div>
+
+                <div class="mb-3">
+                    <label for="weaponNote" class="form-label text-white"
+                        >Note (Markdown)</label
+                    >
+                    <textarea
+                        class="form-control"
+                        id="weaponNote"
+                        rows="4"
+                        placeholder="Enter note in Markdown"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="userEmail" class="form-label text-white"
+                        >User Email</label
+                    >
+                    <input
+                        type="email"
+                        class="form-control"
+                        id="userEmail"
+                        placeholder="Enter user email"
+                        required
+                    />
+                </div>
+
+                <!-- Dispatch Button -->
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                    id="dispatchWeaponButton"
+                >
+                    Dispatch Weapon
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Handling Weapon Dispatch and Toasts -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Select input fields and form
+        const weaponNameInput = document.getElementById("weaponName");
+        const weaponPriceInput = document.getElementById("weaponPrice");
+        const weaponNoteInput = document.getElementById("weaponNote");
+        const userEmailInput = document.getElementById("userEmail");
+        const dispatchForm = document.getElementById("dispatchForm");
+        const toastContainer = document.getElementById("toastContainer");
+
+        // Function to create and show Bootstrap Toasts
+        function showToast(message, type = "success") {
+            const toastId = `toast${Date.now()}`;
+
+            const toastHTML = `
+              <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                  <div class="toast-body text-center">
+                    ${message}
+                  </div>
+                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+              </div>
+            `;
+
+            // Insert the toast HTML into the container
+            toastContainer.insertAdjacentHTML("beforeend", toastHTML);
+
+            // Initialize and show the toast
+            const toastElement = document.getElementById(toastId);
+            if (toastElement) {
+                const bsToast = new bootstrap.Toast(toastElement, {
+                    delay: 5000,
+                });
+                bsToast.show();
+
+                // Remove the toast from DOM after it hides
+                toastElement.addEventListener("hidden.bs.toast", () => {
+                    toastElement.remove();
+                });
+            } else {
+                console.error("Failed to create toast element.");
+            }
+        }
+
+        // Function to validate inputs
+        function validateInputs() {
+            const weaponName = weaponNameInput.value.trim();
+            const weaponPrice = weaponPriceInput.value.trim();
+            const weaponNote = weaponNoteInput.value.trim();
+            const userEmail = userEmailInput.value.trim();
+
+            if (!weaponName || !weaponPrice || !weaponNote || !userEmail) {
+                showToast("All fields are required.", "danger");
+                return false;
+            }
+
+            // Simple email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userEmail)) {
+                showToast("Please enter a valid email address.", "danger");
+                return false;
+            }
+
+            // Additional validation for price
+            if (isNaN(parseFloat(weaponPrice)) || parseFloat(weaponPrice) < 0) {
+                showToast("Please enter a valid non-negative price.", "danger");
+                return false;
+            }
+
+            return true;
+        }
+
+        // Function to handle weapon dispatch
+        async function handleDispatch(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            if (!validateInputs()) return;
+
+            const name = weaponNameInput.value.trim();
+            const price = parseFloat(weaponPriceInput.value.trim());
+            const note = weaponNoteInput.value.trim();
+            const dispatched_to = userEmailInput.value.trim();
+
+            // Disable the submit button to prevent multiple submissions
+            const dispatchButton = document.getElementById(
+                "dispatchWeaponButton",
+            );
+            dispatchButton.disabled = true;
+            dispatchButton.innerHTML = `
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Dispatching...
+            `;
+
+            try {
+                const response = await fetch("/weapons/dispatch", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name, price, note, dispatched_to }),
+                });
+
+                const result = await response.text(); // Assuming server returns plain text responses
+
+                if (response.ok) {
+                    showToast(result, "success");
+                    // Reset the form fields
+                    dispatchForm.reset();
+                } else {
+                    showToast(
+                        result ||
+                            "An error occurred while dispatching the weapon.",
+                        "danger",
+                    );
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("An unexpected error occurred.", "danger");
+            } finally {
+                // Re-enable the button and reset its content
+                dispatchButton.disabled = false;
+                dispatchButton.textContent = "Dispatch Weapon";
+            }
+        }
+
+        // Event Listener for Dispatch Form Submission
+        dispatchForm.addEventListener("submit", handleDispatch);
+    });
+</script>
+{% endblock %}

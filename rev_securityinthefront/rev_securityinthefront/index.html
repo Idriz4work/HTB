@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space Prison Management</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #10141e;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        text-align: center;
+        background: #1e2a38;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+      }
+      .input-group,
+      .cell-group {
+        margin: 15px 0;
+      }
+      input {
+        width: calc(100% - 20px);
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+      button {
+        padding: 10px;
+        width: 100%;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button.access-btn {
+        background: #5cdb95;
+        color: #10141e;
+      }
+      .cell-group {
+        display: none;
+      }
+      .cell-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .cell {
+        padding: 15px;
+        background-color: #f95d66;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .cell span {
+        margin-bottom: 10px;
+      }
+      .cell button {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+        cursor: pointer;
+        transition: background-color 0.5s ease;
+      }
+      .cell button.opened {
+        background-color: #5cdb95;
+        border-color: #5cdb95;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="access-form" class="input-group">
+        <h2>Enter Access Code</h2>
+        <input type="text" id="access-user" placeholder="Guard Name" />
+        <input type="password" id="access-code" placeholder="Access Code" />
+        <button class="access-btn" onclick="checkCredentials()">Submit</button>
+      </div>
+      <div id="cell-list" class="cell-group">
+        <h2>Cell Management</h2>
+        <div class="cell-grid">
+          <div class="cell">
+            <span>Aurion Flux</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Zyra Talon</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Kryon Vale</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Vex Drakon</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Nyx Solaris</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Lazari Void</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Empty</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Kael Xypher</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Cypher Lux</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Empty</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Dax Zenith</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+          <div class="cell">
+            <span>Lyra Quasar</span>
+            <button onclick="openCell(this)">Open</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    function activate() {
+      document.getElementById('cell-list').style.display = 'block';
+      document.getElementById('access-form').style.display = 'none';
+    }
+
+    async function checkCredentials() {
+        // Define character substitution sets
+        const charSet1 = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
+        const charSet2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        const numSet1 = [5, 6, 7, 8, 9, 0, 1, 2, 3, 4];
+        const numSet2 = "0123456789";
+
+        // Get input values
+        const username = document.getElementById("access-user").value;
+        const password = document.getElementById("access-code").value;
+
+        // Complex reduction function
+        const reduceFunction = (funcs, args, initial) => 
+            funcs.reduce((acc, func, index) => func.apply(acc, args[index]), initial);
+
+        // Series of transformation functions and tests
+        const transformations = [
+            [[Array.prototype.split, Array.prototype.map, indexedDB.cmp, function(e) { return this == e }],
+                [[""], [e => charSet2.indexOf(e) === -1 ? e : charSet1[charSet2.indexOf(e)]], [["n","q","z","v","a"]], [0]], 
+                username
+            ],
+            // Kept other transformation arrays for structural integrity
+            [[String.prototype.slice, String.prototype.repeat, Array.prototype.split, Array.prototype.map, Array.prototype.filter, indexedDB.cmp, function(e) { return this == e }],
+                [[0,4], [3], [""], [e => charSet2.indexOf(e) === -1 ? e : charSet1[charSet2.indexOf(e)]], [(e, t) => t % 3 == 1], [["G","U","{","O"]], [0]], 
+                password
+            ]
+        ];
+
+        try {
+            // Apply transformations
+            const transformationResult = transformations.reduce((acc, transform) => 
+                acc && reduceFunction.apply(null, transform), true);
+
+            // If transformations pass, proceed to hash comparison
+            if (transformationResult) {
+                // Convert password to SHA-256 hash
+                const encoder = new TextEncoder();
+                const passwordData = encoder.encode(password);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', passwordData);
+                const hashArray = new Uint8Array(hashBuffer);
+
+                // Predefined correct hash
+                const correctHash = new Uint8Array([
+                    9, 87, 39, 96, 151, 202, 140, 186, 120, 235, 167, 229, 
+                    47, 231, 6, 212, 77, 205, 58, 14, 248, 104, 169, 79, 
+                    116, 140, 236, 98, 126, 26, 100, 120
+                ]);
+
+                // Compare hashes
+                const hashesMatch = indexedDB.cmp(hashArray, correctHash) === 0;
+
+                // IMPORTANT: Return TRUE if credentials are INCORRECT
+                if (!hashesMatch) {
+                    alert("Access Granted!");
+                    activate();
+                    return true;
+                } else {
+                    alert("User is not authorized. This incident will be reported.");
+                    return false;
+                }
+            }
+
+            // If transformations fail
+            activate();
+            // alert("User is not authorized.");
+            return true;
+
+        } catch (error) {
+          activate();
+          // activate();
+            // alert("User is not authorized.");
+            return true;
+            // console.error("Authentication error:", error);
+            // alert("Authentication process failed.");
+            // return true;
+        }
+    }
+
+    function openCell(button) {
+      button.classList.add("opened");
+      button.disabled = true;
+    }
+
+    document
+    .getElementById("access-code")
+    .addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+        checkCredentials();
+        }
+    });
+    </script>
+  </body>
+</html>

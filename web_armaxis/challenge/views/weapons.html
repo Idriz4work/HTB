@@ -1,0 +1,32 @@
+{% extends "layout.html" %} {% block content %}
+<div class="container mt-4">
+    {% if weapons.length > 0 %}
+    <div class="table-responsive mt-3">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Dispatched To</th>
+                    <th scope="col">Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for weapon in weapons %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ weapon.name }}</td>
+                    <td>${{ weapon.price }}</td>
+                    <td>{{ weapon.dispatched_to }}</td>
+                    <td>{{ weapon.note | safe }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div>No weapons dispatched yet.</div>
+    {% endif %}
+</div>
+{% endblock %}
