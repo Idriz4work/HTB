@@ -1,4 +1,4 @@
-# Hack The Box (HTB) Projects
+# Hack The Box (HTB)
 
 Welcome to my **Hack The Box (HTB)** repository! This space is dedicated to showcasing the various challenges, techniques, and solutions I explored while working on HTB exercises. HTB is a platform designed to test and develop cybersecurity skills through hands-on penetration testing challenges.
 
